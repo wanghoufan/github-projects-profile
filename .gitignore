@@ -1,0 +1,7 @@
+# 本地笔记与系统文件，不进公开仓库
+.workbuddy/
+.DS_Store
+
+# Python 运行产物
+__pycache__/
+*.py[cod]

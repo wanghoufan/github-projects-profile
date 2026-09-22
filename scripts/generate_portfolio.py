@@ -12,15 +12,21 @@
 
 用法：
   python3 scripts/generate_portfolio.py
-  默认输出：~/.workbuddy/GITHUB_PROJECTS.md
+  默认输出：~/.workbuddy/GITHUB_PROJECTS.md 与 ~/.workbuddy/SKILL_CONTEXT.md（同目录两份）
   覆盖输出：PORTFOLIO_OUT=/abs/path/out.md python3 scripts/generate_portfolio.py
+  单独指定第二份：SKILL_CONTEXT_OUT=/abs/path/SKILL_CONTEXT.md python3 scripts/generate_portfolio.py
   指定账号：PORTFOLIO_USER=otherlogin python3 scripts/generate_portfolio.py
+  离线调试：PORTFOLIO_DUMP_JSON=/tmp/raw.json python3 scripts/generate_portfolio.py（存采集结果）
 
 逻辑：
   1. gh repo list 拉取当前用户全部仓库（公开+私有）；
   2. 逐仓库用 gh api 取 README（base64）与最近一次 commit；
   3. 从 README 提炼「功能 / 技术栈 / 最新进度」；
-  4. 按主题分组渲染成 Markdown，写入输出文件。
+  4. 按主题分组渲染成 Markdown，写入 GITHUB_PROJECTS.md；
+  5. 用同一份采集结果，经 scripts/skill_context.py 的确定性规则派生
+     SKILL_CONTEXT.md（Skill 日报用的轻量需求画像）——不二次请求 API、不调用大模型。
+
+退出码：0 正常；1 = 有仓库 README/提交没拉到（文件仍写出，但显式标记失败）；2 = 仓库列表都没拉到。
 """
 from __future__ import annotations
 
@@ -31,7 +37,7 @@ import re
 import os
 import sys
 import time
-from datetime import date
+from datetime import date, datetime
 
 # Windows 终端默认 codepage 为 cp936，中文 print 易触发 UnicodeEncodeError。
 # 启动时把 stdout/stderr 重配置为 UTF-8（仅当 API 可用）。
@@ -45,22 +51,51 @@ if sys.platform == "win32":
         pass
 
 
+def now_stamp() -> str:
+    """生成时间戳（YYYY-MM-DD HH:mm）。时区由运行环境决定：
+    本地运行取本机时区，CI 运行统一设 TZ=Asia/Shanghai。"""
+    return datetime.now().strftime("%Y-%m-%d %H:%M")
+
+
+# GitHub API 偶发网络抖动（EOF / timeout / connection reset），属可重试错误，
+# 不是鉴权失败。命中这些关键词时自动退避重试，避免误判为「gh 未登录」。
+NET_HINT = re.compile(r"EOF|timeout|timed out|connection reset|i/o timeout|TLS|no such host", re.I)
+RETRYABLE = NET_HINT
+
+
 def detect_user() -> str:
-    """目标 GitHub 用户：优先环境变量，其次当前 gh 登录账号。"""
+    """目标 GitHub 用户：优先环境变量，其次当前 gh 登录账号。
+
+    这里自带网络抖动重试：探测失败必须区分「网络问题」与「未登录」——
+    实测 gh 偶发 EOF 时若直接报「请先 gh auth login」，排查方向会被彻底带偏。
+    """
     env = os.environ.get("PORTFOLIO_USER")
     if env:
         return env
-    try:
-        r = subprocess.run(
-            ["gh", "api", "user", "--jq", ".login"],
-            capture_output=True, text=True,
-        )
+    err = ""
+    for attempt in range(3):
+        try:
+            r = subprocess.run(
+                ["gh", "api", "user", "--jq", ".login"],
+                capture_output=True, text=True,
+            )
+        except Exception as exc:  # gh 不存在 / 无法执行
+            raise SystemExit("无法执行 gh（%s）。请先安装 GitHub CLI：https://cli.github.com/" % exc)
         if r.returncode == 0 and r.stdout.strip():
             return r.stdout.strip()
-    except Exception:
-        pass
+        err = (r.stderr or "").strip()
+        if attempt < 2 and NET_HINT.search(err):
+            sys.stderr.write("gh 网络抖动，重试账号探测 %d/2\n" % (attempt + 1))
+            time.sleep(1.5 * (attempt + 1))
+            continue
+        break
+    reason = (err.splitlines()[0] if err else "(gh 无错误输出)")
     # 不写死任何账号名：探测失败就明确报错，避免把机器专属账号写进可迁移脚本。
-    raise SystemExit("无法识别 GitHub 账号，请先执行 gh auth login，或设置 PORTFOLIO_USER。")
+    raise SystemExit(
+        "无法识别 GitHub 账号。原因：%s\n"
+        "  排查顺序：1) 若是网络类报错（EOF/timeout/connection reset），直接重跑即可；"
+        "2) gh auth status 确认已登录且令牌含 repo 权限（否则看不到私有仓库）；"
+        "3) 也可用 PORTFOLIO_USER=账号名 显式指定。" % reason)
 
 
 USER = detect_user()
@@ -71,24 +106,48 @@ OUT = os.environ.get(
 )
 
 
-# GitHub API 偶发网络抖动（EOF / timeout / connection reset），属可重试错误，
-# 不是鉴权失败。命中这些关键词时自动退避重试，避免误判为「gh 未登录」。
-RETRYABLE = re.compile(r"EOF|timeout|timed out|connection reset|i/o timeout|TLS|no such host", re.I)
+# 采集诊断：用于运行日志里区分「正常情况」与「真失败」，避免静默失败。
+# 键：retry 网络抖动重试次数 / empty 空仓库、无 README（正常）/ readme_fail、commit_fail 真失败。
+DIAG = {"retry": 0, "empty": [], "readme_fail": [], "commit_fail": []}
+LAST_ERR = ""
 
 
 def gh(args, retries=2):
+    global LAST_ERR
     for attempt in range(retries + 1):
         r = subprocess.run(["gh"] + args, capture_output=True, text=True)
         if r.returncode == 0:
+            LAST_ERR = ""
             return r.stdout
         err = (r.stderr or "")[:400]
+        LAST_ERR = err
         if attempt < retries and RETRYABLE.search(err):
+            DIAG["retry"] += 1
             sys.stderr.write("gh 网络抖动，重试 %d/%d: %s\n" % (attempt + 1, retries, " ".join(args)[:80]))
             time.sleep(1.5 * (attempt + 1))
             continue
         sys.stderr.write("gh failed: " + " ".join(args) + "\n" + err + "\n")
         return None
     return None
+
+
+def last_err_brief():
+    """取最近一次 gh 失败信息的一行摘要，用于日志里定位失败原因。"""
+    for line in (LAST_ERR or "").splitlines():
+        line = line.strip()
+        if line:
+            return line[:160]
+    return "(无错误输出)"
+
+
+def is_empty_repo_error():
+    """空仓库 / 无 README 属于正常情况（不是鉴权或权限问题）。
+
+    - `readme` 接口在无 README 或空仓库上返回 404 Not Found；
+    - `commits` 接口在空仓库上返回 409 Git Repository is empty。
+    """
+    e = LAST_ERR or ""
+    return ("Not Found" in e) or ("is empty" in e) or ("404" in e) or ("409" in e)
 
 
 def clean(t):
@@ -244,13 +303,35 @@ DESCRIPTION_OVERRIDE = {
     "Video2Obsidian": "Video2Obsidian｜本地视频自动转写写入 Obsidian 工具（本地 Whisper，零 API 成本，Apple Silicon Mac）。",
     "personal-rss": "personal-rss：基于 FreshRSS + RSSHub + Redis 的个人信息雷达 RSS 聚合（Docker 部署工作区）。",
     "24-species-test": "（空仓库，暂无 README / 内容）。",
+    "github-projects-profile": "本仓：GitHub 项目全景档案 + Skill 推荐背景，两份 Markdown 由脚本每日自动生成，供智能体读取。",
 }
 
 # 超过该天数未更新视为「长期停滞」，在材料中标红提示。
 STALE_DAYS = 30
 
+# README 分段提取的标题关键词（同时供 SKILL_CONTEXT 派生信号复用，勿在此之外另写一份）。
+FEATURE_KEYS = ["功能", "特性", "feature", "functions", "能力", "what it"]
+TECH_KEYS = ["技术栈", "技术", "tech", "stack", "依赖", "built with", "架构"]
+
+# 内容（忽略生成时间戳）没变时不重写文件，从根上避免「每日空 commit」。
+SKIP_IF_UNCHANGED = os.environ.get("PORTFOLIO_WRITE_ALWAYS", "").strip() not in ("1", "true", "TRUE")
+
+
+def load_skill_context():
+    """加载同目录下的确定性生成模块（scripts/skill_context.py）。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    try:
+        import skill_context
+    except ImportError as exc:
+        sys.exit("生成 SKILL_CONTEXT.md 失败：无法导入 scripts/skill_context.py（%s）" % exc)
+    return skill_context
+
 
 def main():
+    # 前置检查：生成模块必须先能导入，避免采集 1 分钟后再失败。
+    sc = load_skill_context()
     print("== 拉取仓库清单（含私有）==")
     out = gh(["repo", "list", "--limit", "200",
               "--json", "name,visibility,updatedAt,description,primaryLanguage,homepageUrl,url,stargazerCount"])
@@ -271,15 +352,52 @@ def main():
                      homepage=r.get("homepageUrl"), url=r.get("url"), stars=r.get("stargazerCount"),
                      readme=None, last_commit=None)
         raw = gh(["api", f"repos/{USER}/{name}/readme", "--jq", ".content"])
-        if raw and raw.strip():
+        if raw is None:
+            if is_empty_repo_error():
+                DIAG["empty"].append(name)
+            else:
+                DIAG["readme_fail"].append((name, last_err_brief()))
+        elif raw.strip():
             try:
                 entry["readme"] = base64.b64decode(raw).decode("utf-8", "replace")
-            except Exception:
-                pass
+            except Exception as exc:
+                DIAG["readme_fail"].append((name, "README base64 解码失败: %s" % exc))
         cm = gh(["api", f"repos/{USER}/{name}/commits?per_page=1", "--jq", ".[0].commit.message"])
         if cm:
             entry["last_commit"] = cm.strip().split("\n")[0][:140]
+        elif not is_empty_repo_error():
+            DIAG["commit_fail"].append((name, last_err_brief()))
+        # 供 SKILL_CONTEXT 派生使用的「声明式信号」：与上面档案同一套分段提取逻辑，
+        # 只吃项目自己声明的功能/技术栈，避免把 README 正文里的偶然提及当成技术栈。
+        entry["signal_feats"] = get_section(entry["readme"], FEATURE_KEYS)
+        entry["signal_tech"] = get_section(entry["readme"], TECH_KEYS)
         results.append(entry)
+
+    # 采集诊断：必须能从日志区分「鉴权/权限失败」「README 失败」「正常空仓库」。
+    ok_readme = sum(1 for r in results if r.get("readme"))
+    print("== 采集诊断 ==")
+    print("  仓库 %d ｜ 取到 README %d ｜ 空仓库/无 README（正常）%d ｜ 网络抖动重试 %d"
+          % (len(results), ok_readme, len(DIAG["empty"]), DIAG["retry"]))
+    if DIAG["empty"]:
+        print("  正常空仓库 / 无 README：%s" % ", ".join(DIAG["empty"]))
+    for key, label in (("readme_fail", "README 拉取失败"), ("commit_fail", "最近提交拉取失败")):
+        if DIAG[key]:
+            print("  ERROR: %s %d 个" % (label, len(DIAG[key])))
+            for name, why in DIAG[key]:
+                print("    - %s：%s" % (name, why))
+            if any(("auth" in w.lower() or "403" in w or "401" in w) for _n, w in DIAG[key]):
+                print("  ERROR 提示：疑似鉴权或私有仓库权限不足，请检查 token 是否含 repo 权限。")
+    if not DIAG["readme_fail"] and not DIAG["commit_fail"]:
+        print("  无拉取失败。")
+
+    # 采集结果落盘（可选）：离线调试 / 复盘渲染逻辑时不必再打一遍 GitHub API。
+    # 只在显式设置 PORTFOLIO_DUMP_JSON 时写，日常运行不产生额外文件。
+    dump = os.environ.get("PORTFOLIO_DUMP_JSON")
+    if dump:
+        with open(os.path.expanduser(dump), "w", encoding="utf-8") as f:
+            json.dump({"user": USER, "collected_at": now_stamp(), "repos": results},
+                      f, ensure_ascii=False, indent=1)
+        print("DUMPED", dump)
 
     by_name = {r["name"]: r for r in results}
     ordered = sorted(results, key=lambda r: r["updatedAt"], reverse=True)
@@ -317,8 +435,8 @@ def main():
 
     def render_entry(r):
         rm = r.get("readme")
-        feats = get_section(rm, ["功能", "特性", "feature", "functions", "能力", "what it"])
-        tech = get_section(rm, ["技术栈", "技术", "tech", "stack", "依赖", "built with", "架构"])
+        feats = get_section(rm, FEATURE_KEYS)
+        tech = get_section(rm, TECH_KEYS)
         status = get_status(rm, r.get("last_commit"), r["updatedAt"])
         days = (today - date.fromisoformat(r["updatedAt"][:10])).days
         stale = "  ⚠️ 已 %d 天未更新（长期停滞）" % days if days >= STALE_DAYS else ""
@@ -358,9 +476,37 @@ def main():
     out_dir = os.path.dirname(OUT)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
-    with open(OUT, "w", encoding="utf-8") as f:
-        f.write("\n".join(md) + "\n")
-    print("WRITTEN", OUT, "chars:", len("\n".join(md)))
+    portfolio_text = "\n".join(md) + "\n"
+    changed_p = sc.write_if_changed(OUT, portfolio_text, SKIP_IF_UNCHANGED)
+    print("%s %s ｜ 字符数: %d" % ("WRITTEN" if changed_p else "UNCHANGED", OUT, len(portfolio_text)))
+
+    # ---- 第二份文件：Skill 需求画像 ----
+    # 与上面同一份采集结果派生：不重复请求 GitHub API、不调用任何大模型。
+    # 默认与 GITHUB_PROJECTS.md 放同一目录，可用 SKILL_CONTEXT_OUT 单独覆盖。
+    skill_out = os.environ.get("SKILL_CONTEXT_OUT") or os.path.join(
+        os.path.dirname(OUT) or ".", "SKILL_CONTEXT.md")
+    prev_text = sc.read_text(skill_out)
+
+    try:
+        skill_text = sc.build_skill_context(
+            results, desc_override=DESCRIPTION_OVERRIDE, today=today,
+            prev_text=prev_text, updated_at=now_stamp())
+    except Exception as exc:
+        sys.exit("生成 SKILL_CONTEXT.md 失败：%s: %s" % (type(exc).__name__, exc))
+
+    changed_s = sc.write_if_changed(skill_out, skill_text, SKIP_IF_UNCHANGED)
+    print("%s %s ｜ 字符数: %d ｜ 相对完整档案体积: %.0f%%（%d → %d 字符）"
+          % ("WRITTEN" if changed_s else "UNCHANGED", skill_out, len(skill_text),
+             100.0 * len(skill_text) / max(len(portfolio_text), 1),
+             len(portfolio_text), len(skill_text)))
+    if not changed_p and not changed_s:
+        print("两份文件内容均无实质变化（生成时间戳不算变化），无需提交。")
+
+    # 退出码：0 正常；1 = 有仓库内容没拉到（文件仍写出，但运行状态标记为失败，不静默）；
+    # 2 = 完全没拿到仓库列表（见 main 开头 sys.exit）。
+    if DIAG["readme_fail"] or DIAG["commit_fail"]:
+        sys.stderr.write("ERROR: 本次采集存在拉取失败项，内容可能不完整（详见上方诊断）。\n")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

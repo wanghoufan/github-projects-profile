@@ -1,0 +1,96 @@
+name: 每日更新项目档案与 Skill 背景
+
+# 每天 07:00（Asia/Shanghai）自动跑一次：采集 GitHub 项目数据 → 同时更新
+# GITHUB_PROJECTS.md（完整项目档案）与 SKILL_CONTEXT.md（Skill 推荐背景）。
+# 注意：GitHub 的 cron 用 UTC，23:00 UTC = 次日 07:00 北京时间，TZ 已显式设为 Asia/Shanghai。
+on:
+  schedule:
+    - cron: "0 23 * * *"
+  workflow_dispatch: {}   # 支持手动触发（排查问题用）
+
+permissions:
+  contents: write         # 需要在仓库里提交生成结果
+
+concurrency:
+  group: portfolio-daily
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+      # 采集账号全部仓库（含私有）需要一个带 repo 权限的令牌。
+      # 优先用仓库 Secrets 里的 PORTFOLIO_TOKEN（PAT）；没配就退回默认 GITHUB_TOKEN
+      # （默认令牌只能看到本仓库，会在下面的自检步骤里明确报错，不会静默跑出残缺档案）。
+      GH_TOKEN: ${{ secrets.PORTFOLIO_TOKEN || secrets.GITHUB_TOKEN }}
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+
+      - name: 环境检查
+        run: |
+          echo "时间：$(date '+%Y-%m-%d %H:%M %Z')"
+          python3 --version
+          gh --version | head -1
+
+      - name: 令牌权限自检
+        run: |
+          set -e
+          echo "== gh 鉴权状态 =="
+          gh auth status || true
+          n=$(gh repo list --limit 200 --json name --jq 'length')
+          echo "当前令牌可见仓库数：$n"
+          if [ "$n" -lt 5 ]; then
+            echo "::error::令牌只能看到 $n 个仓库。默认 GITHUB_TOKEN 无法读取全部私有仓库，"
+            echo "::error::请在仓库 Settings → Secrets and variables → Actions 添加 PORTFOLIO_TOKEN"
+            echo "::error::（一个带 repo 权限的 Personal Access Token），否则生成的档案不完整。"
+            exit 1
+          fi
+
+      - name: 采集并生成两份文件
+        id: gen
+        continue-on-error: true
+        env:
+          PORTFOLIO_OUT: ${{ github.workspace }}/GITHUB_PROJECTS.md
+          SKILL_CONTEXT_OUT: ${{ github.workspace }}/SKILL_CONTEXT.md
+        run: |
+          set -o pipefail
+          python3 scripts/generate_portfolio.py 2>&1 | tee /tmp/generate.log
+
+      - name: 仅在有实质变化时提交
+        if: always()
+        run: |
+          set -e
+          for f in GITHUB_PROJECTS.md SKILL_CONTEXT.md; do
+            if [ ! -s "$f" ]; then
+              echo "::error::$f 不存在或为空，生成环节失败。"
+              exit 1
+            fi
+            echo "$f 大小：$(wc -c < "$f") 字节"
+          done
+
+          # 脚本内部已做「内容（忽略生成时间戳）无变化就不重写」，所以这里直接看 git 状态即可。
+          if git diff --quiet -- GITHUB_PROJECTS.md SKILL_CONTEXT.md; then
+            echo "两份文件内容均无变化 → 不提交，不产生空 commit。"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add GITHUB_PROJECTS.md SKILL_CONTEXT.md
+          git commit -m "chore: 每日更新项目档案与 Skill 背景 [skip ci]"
+          git push
+
+      - name: 运行结果判定
+        if: always()
+        run: |
+          if [ "${{ steps.gen.outcome }}" != "success" ]; then
+            echo "::error::采集/生成未完全成功，常见原因与定位方法："
+            echo "::error::1) 令牌失效或权限不足 → 看「令牌权限自检」与日志里的 gh failed: ... 401/403"
+            echo "::error::2) 私有仓库读不到 → 同上，检查 token 是否含 repo 权限"
+            echo "::error::3) 个别仓库 README/提交拉取失败 → 日志「采集诊断」区会逐条列出仓库名与原因"
+            echo "::error::4) 文件生成失败 → 日志里的 Traceback"
+            exit 1
+          fi
+          echo "采集与生成全部正常。"

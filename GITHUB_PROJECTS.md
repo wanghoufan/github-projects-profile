@@ -2,17 +2,18 @@
 
 > 自动采集自 GitHub API（本机 `gh` 鉴权，含私有仓库）。用途：让智能体快速熟悉你正在开发的项目、技术栈与进度，从而给出更针对性的建议。
 
-> 生成时间：2026-09-22 ｜ 目标用户：wanghoufan ｜ 仓库总数：**41**（公开 21 / 私有 20）
+> 生成时间：2026-09-22 ｜ 目标用户：wanghoufan ｜ 仓库总数：**42**（公开 22 / 私有 20）
 
 
 ## 总览（按最近更新排序）
 
 | 项目 | 类型 | 语言 | 最近更新 | 一句话定位 |
 |---|---|---|---|---|
+| `party-night-v1-2` | **私有** | TypeScript | 2026-09-22 | 无需账号、可离线继续的移动端聚会游戏 PWA：酒吧/家庭聚会快速开局，AI… |
+| `github-projects-profile` | 公开 | Python | 2026-09-22 | 本仓：GitHub 项目全景档案 + Skill 推荐背景，两份 Mark… |
 | `DeepSeekBalanceWidget-Mac` | 公开 | Python | 2026-09-21 | macOS 专用版｜DeepSeek 余额 & ChatGPT Plus … |
 | `orca-v2.1-governance` | 公开 | Shell | 2026-09-21 | ORCA V2.1 治理模板分发版（主备模型 override + 双通道） |
 | `place-journal` | 公开 | TypeScript | 2026-09-21 | 个人地点打卡小工具 — 移动优先 PWA，拍照/语音记录→AI整理→地点/… |
-| `party-night-v1-2` | **私有** | TypeScript | 2026-09-21 | 无需账号、可离线继续的移动端聚会游戏 PWA：酒吧/家庭聚会快速开局，AI… |
 | `personal-rss` | **私有** | TypeScript | 2026-09-21 | personal-rss：基于 FreshRSS + RSSHub + R… |
 | `stretch-routine-app` | 公开 | TypeScript | 2026-09-21 | (无描述) |
 | `protein-calculator` | **私有** | TypeScript | 2026-09-21 | (无描述) |
@@ -424,10 +425,10 @@
 #### `party-night-v1-2`  ·  私有
 
 - **定位**：无需账号、可离线继续的移动端聚会游戏 PWA：酒吧/家庭聚会快速开局，AI 整局预生成题卡，数据只留本设备
-- **链接**：https://github.com/wanghoufan/party-night-v1-2 ｜ 预览：https://party-night-v1-2.vercel.app ｜ 语言：TypeScript ｜ 更新：2026-09-21 ｜ Stars：0
+- **链接**：https://github.com/wanghoufan/party-night-v1-2 ｜ 预览：https://party-night-v1-2.vercel.app ｜ 语言：TypeScript ｜ 更新：2026-09-22 ｜ Stars：0
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：Next.js 16.3.3、React 19、TypeScript 5、Tailwind CSS 4 与 CSS Design Tokens；Zod 负责 AI 输出、Session 与本地数据校验；idb 封装 IndexedDB；Web Crypto 负责本机密钥加密；Vitest + Testing Library + Playwright
-- **最新进度**：2026-09-21；最近提交：fix: vercelignore governance symlink and backups
+- **最新进度**：2026-09-22；最近提交：diag: upstream shape log
 
 #### `50-haikou-cafes`  ·  公开
 
@@ -436,3 +437,14 @@
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：构建工具：Python 3 静态站点生成器（build.py）；样式：Tailwind CSS 3.4 编译输出 site.css；数据源：businesses.json（50 家咖啡店结构化数据）+ data/archetypes.py（视觉原型配置）；模板：templates/pages.py（首页 HTML 模板 + JS 状态管理辅助函数）；前端交互：纯原生 JavaScript（无框架依赖），localStorage 持久化状态；地图：Leaflet 1.9 + OpenStreetMap 底图
 - **最新进度**：2026-08-08；最近提交：优化 README：移除移动端截图 + 精简预览区  ⚠️ 已 45 天未更新（长期停滞）
+
+### 其他 / 未分类
+
+
+#### `github-projects-profile`  ·  公开
+
+- **定位**：本仓：GitHub 项目全景档案 + Skill 推荐背景，两份 Markdown 由脚本每日自动生成，供智能体读取。
+- **链接**：https://github.com/wanghoufan/github-projects-profile ｜ 预览：— ｜ 语言：Python ｜ 更新：2026-09-22 ｜ Stars：0
+- **功能**：（README 未列明要点，详见上方链接）
+- **技术栈**：Python（详见 README）
+- **最新进度**：2026-09-22；最近提交：初始化：GitHub 项目全景档案（41 仓：公开 21 / 私有 20）
