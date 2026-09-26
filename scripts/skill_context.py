@@ -447,7 +447,7 @@ def build_skill_context(repos, desc_override=None, today=None, prev_text=None,
     md.append("> 数据来源：GITHUB_PROJECTS.md / GitHub 项目档案")
     md.append("> 用途：Skill 情报日报、Skill 推荐与排行个性化、Skill 搜索关键词生成")
     md.append("> 说明：本文件由确定性规则从项目档案派生，不调用任何大模型；两份文件来自同一次采集，无需重复请求 GitHub API。")
-    md.append("> 注意：含私有仓库的名称与定位，仅用于本机/本仓智能体读取，勿再对外分发。\n")
+    md.append("> 注意：本文件属 Public 展示层，只含公开仓库；私有项目明细在内部注册表，不在此输出。\n")
 
     # 1 ----------------------------------------------------------------
     md.append("## 1. 当前项目概况\n")
