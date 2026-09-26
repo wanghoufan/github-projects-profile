@@ -119,7 +119,8 @@ def audit_row(row, root, fetch):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--map", dest="mapfile")
-    ap.add_argument("--root", default="/Users/zzymima0000/Developer/coding/1.Active")
+    ap.add_argument("--root", default=os.environ.get(
+        "STEWARD_CODING", os.path.join(os.path.dirname(HERE), "1.Active")))
     ap.add_argument("--fetch", action="store_true", help="git fetch --prune before ahead/behind")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()

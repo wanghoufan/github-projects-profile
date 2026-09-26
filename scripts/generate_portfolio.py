@@ -309,6 +309,11 @@ DESCRIPTION_OVERRIDE = {
 # 超过该天数未更新视为「长期停滞」，在材料中标红提示。
 STALE_DAYS = 30
 
+# §6 内外分层：Public 档案默认只渲染公开仓库。私有仓库的名称、描述、README 摘要与进度
+# 属于内部注册表（../000-alw-steward 内部治理/PROJECT_MAP.tsv），不出现在公开仓。
+# 需要旧行为时显式 PORTFOLIO_PRIVATE_DETAIL=1。
+PUBLIC_ONLY = os.environ.get("PORTFOLIO_PRIVATE_DETAIL", "0") != "1"
+
 # README 分段提取的标题关键词（同时供 SKILL_CONTEXT 派生信号复用，勿在此之外另写一份）。
 FEATURE_KEYS = ["功能", "特性", "feature", "functions", "能力", "what it"]
 TECH_KEYS = ["技术栈", "技术", "tech", "stack", "依赖", "built with", "架构"]
@@ -399,17 +404,24 @@ def main():
                       f, ensure_ascii=False, indent=1)
         print("DUMPED", dump)
 
+    all_repos = results
+    hidden = [r for r in all_repos if r["visibility"] != "public"] if PUBLIC_ONLY else []
+    if PUBLIC_ONLY:
+        results = [r for r in all_repos if r["visibility"] == "public"]
     by_name = {r["name"]: r for r in results}
     ordered = sorted(results, key=lambda r: r["updatedAt"], reverse=True)
-    pub = sum(1 for r in results if r["visibility"] == "public")
-    pri = sum(1 for r in results if r["visibility"] == "private")
+    pub = sum(1 for r in all_repos if r["visibility"] == "public")
+    pri = sum(1 for r in all_repos if r["visibility"] != "public")
     today = date.today()
 
     md = []
     md.append("# 我的 GitHub 项目全景（给智能体的背景档案）\n")
-    md.append("> 自动采集自 GitHub API（本机 `gh` 鉴权，含私有仓库）。用途：让智能体快速熟悉你正在开发的项目、技术栈与进度，从而给出更针对性的建议。\n")
+    md.append("> 自动采集自 GitHub API。本文件是 Public 展示层：只列公开仓库；"
+              "私有仓库明细在内部注册表，不在此输出。\n")
     md.append("> 生成时间：%s ｜ 目标用户：%s ｜ 仓库总数：**%d**（公开 %d / 私有 %d）\n" % (
-        today.isoformat(), USER, len(results), pub, pri))
+        today.isoformat(), USER, pub + pri, pub, pri))
+    if hidden:
+        md.append("> 另有 **%d** 个私有仓库未列出（名称、描述、进度均属内部治理层）。\n" % len(hidden))
     md.append("\n## 总览（按最近更新排序）\n")
     md.append("| 项目 | 类型 | 语言 | 最近更新 | 一句话定位 |")
     md.append("|---|---|---|---|---|")
