@@ -1,7 +1,7 @@
 # Skill 推荐背景
 
 > 自动生成，请勿手工编辑
-> 更新时间：2026-09-26 20:11（仅在有实质变化时更新，未变化不产生新提交）
+> 更新时间：2026-09-27 03:24（仅在有实质变化时更新，未变化不产生新提交）
 > 数据来源：GITHUB_PROJECTS.md / GitHub 项目档案
 > 用途：Skill 情报日报、Skill 推荐与排行个性化、Skill 搜索关键词生成
 > 说明：本文件由确定性规则从项目档案派生，不调用任何大模型；两份文件来自同一次采集，无需重复请求 GitHub API。
@@ -85,12 +85,12 @@
 - Python 本地自动化 / 数据处理 — 活跃 7 / 权重 21
 - 浏览器端 QA / E2E 自动化验证 — 活跃 6 / 权重 20
 - 桌面应用 / 跨平台打包与发布 — 活跃 6 / 权重 20
+- 本地优先 / 隐私与脱敏 — 活跃 6 / 权重 18
 - API Key / Secret 安全与配置收敛 — 活跃 6 / 权重 18
 - Android 真机 QA / 构建签名 — 活跃 5 / 权重 15
 - Docker / 自托管服务运维 — 活跃 5 / 权重 15
 - SDD / SPEC / PLAN / TASK 开发流程 — 活跃 5 / 权重 15
 - 金融 / 投资口径与计算 — 活跃 5 / 权重 15
-- 本地优先 / 隐私与脱敏 — 活跃 5 / 权重 15
 - 数据看板 / 可视化与统计口径 — 活跃 4 / 权重 14
 - 响应式 Web（桌面 + 手机同一套） — 活跃 3 / 权重 11
 - 时间 / 任务管理工具集成 — 活跃 3 / 权重 10
@@ -131,8 +131,6 @@
   - 影响：规格驱动开发流程类 Skill 权重上调
 - 金融 / 投资口径与计算 — 活跃 5（14 天内 4）/ 权重 15
   - 影响：金融投研类 Skill 权重上调
-- 本地优先 / 隐私与脱敏 — 活跃 5（14 天内 4）/ 权重 15
-  - 影响：隐私与脱敏类 Skill 权重上调
 - 数据看板 / 可视化与统计口径 — 活跃 4（14 天内 4）/ 权重 14
   - 影响：看板与可视化类 Skill 权重上调
 - 响应式 Web（桌面 + 手机同一套） — 活跃 3（14 天内 3）/ 权重 11
@@ -172,26 +170,19 @@
 - docker self hosted infrastructure
 - spec driven development plan task
 - investment dashboard finance analysis
-- privacy local data compliance
 - dashboard data visualization
 - responsive web design
 - task management calendar integration
 - voice input speech recognition
 - github automation actions workflow
+- expo react native
 
 ## 7. 最近变化
 
 > 只记录可能影响 Skill 推荐方向的变化；普通提交不入此表。
 
-- 下降 `Agent / 多智能体治理与提示词工程` 权重 51 → 28（活跃 9 / 14 天内 9）→ Agent 编排 / 提示词治理类 Skill 权重上调
-- 下降 `PWA / 离线能力与本地存储` 权重 50 → 31（活跃 10 / 14 天内 10）→ PWA 与离线 / 本地存储类 Skill 权重上调
-- 下降 `桌面应用 / 跨平台打包与发布` 权重 39 → 20（活跃 6 / 14 天内 5）→ 桌面封装与发布签名类 Skill 权重上调
-- 下降 `视频 / 音频转写与内容归档` 权重 20 → 6（活跃 2 / 14 天内 2）→ 音视频转写与归档类 Skill 权重上调
-- 下降 `数据看板 / 可视化与统计口径` 权重 27 → 14（活跃 4 / 14 天内 4）→ 看板与可视化类 Skill 权重上调
-- 下降 `Python 本地自动化 / 数据处理` 权重 33 → 21（活跃 7 / 14 天内 6）→ Python 本地自动化类 Skill 权重上调
-- 下降 `浏览器端 QA / E2E 自动化验证` 权重 32 → 20（活跃 6 / 14 天内 6）→ 浏览器 QA / E2E 验证类 Skill 权重上调
-- 下降 `Android 真机 QA / 构建签名` 权重 27 → 15（活跃 5 / 14 天内 5）→ Android 构建与真机 QA 类 Skill 权重上调
-- 规模变化：仓库 42 → 24，30 天内活跃 31 → 20，14 天内活跃 25 → 18
+- 上升 `本地优先 / 隐私与脱敏` 权重 15 → 18（活跃 6 / 14 天内 5）→ 隐私与脱敏类 Skill 权重上调
+- 规模变化：仓库 24 → 24，30 天内活跃 20 → 20，14 天内活跃 18 → 18
 
 ---
 
@@ -200,5 +191,5 @@
 > 供下一次生成时对比「最近变化」，勿删。
 
 <!-- SKILL_CONTEXT_STATE
-{"generated":"2026-09-26 20:11","needs":{"agent-governance":{"active":9,"hot":9,"w":28.0},"android":{"active":5,"hot":5,"w":15.0},"browser-qa":{"active":6,"hot":6,"w":20.0},"dashboard-viz":{"active":4,"hot":4,"w":14.0},"data-pipeline":{"active":1,"hot":1,"w":3.0},"deploy":{"active":9,"hot":9,"w":30.0},"desktop-app":{"active":6,"hot":5,"w":20.0},"docker-infra":{"active":5,"hot":5,"w":15.0},"expo-rn":{"active":2,"hot":2,"w":6.0},"finance-calc":{"active":5,"hot":4,"w":15.0},"frontend-design":{"active":13,"hot":11,"w":39.0},"github-auto":{"active":3,"hot":2,"w":9.0},"llm-api":{"active":10,"hot":8,"w":30.0},"media-transcribe":{"active":2,"hot":2,"w":6.0},"photo-mgmt":{"active":8,"hot":8,"w":25.0},"privacy-local":{"active":5,"hot":4,"w":15.0},"pwa-offline":{"active":10,"hot":10,"w":31.0},"python-auto":{"active":7,"hot":6,"w":21.0},"responsive":{"active":3,"hot":3,"w":11.0},"secret-safety":{"active":6,"hot":5,"w":18.0},"spec-driven":{"active":5,"hot":5,"w":15.0},"supabase-db":{"active":8,"hot":7,"w":25.0},"task-integration":{"active":3,"hot":3,"w":10.0},"voice-input":{"active":3,"hot":3,"w":9.0}},"tech":{"cloudflare":{"active":2,"w":7.0},"csharp":{"active":2,"w":6.0},"docker":{"active":3,"w":9.0},"expo":{"active":2,"w":6.0},"html-single":{"active":1,"w":3.0},"llm":{"active":9,"w":26.0},"playwright":{"active":1,"w":3.0},"pwa":{"active":6,"w":19.0},"python":{"active":5,"w":16.0},"react":{"active":7,"w":21.0},"supabase":{"active":3,"w":10.0},"swift":{"active":2,"w":5.0},"tailwind":{"active":4,"w":12.0},"typescript":{"active":11,"w":33.0},"vercel":{"active":2,"w":8.0}},"totals":{"active30":20,"hot14":18,"repos":24},"v":1}
+{"generated":"2026-09-27 03:24","needs":{"agent-governance":{"active":9,"hot":9,"w":28.0},"android":{"active":5,"hot":5,"w":15.0},"browser-qa":{"active":6,"hot":6,"w":20.0},"dashboard-viz":{"active":4,"hot":4,"w":14.0},"data-pipeline":{"active":1,"hot":1,"w":3.0},"deploy":{"active":9,"hot":9,"w":30.0},"desktop-app":{"active":6,"hot":5,"w":20.0},"docker-infra":{"active":5,"hot":5,"w":15.0},"expo-rn":{"active":2,"hot":2,"w":6.0},"finance-calc":{"active":5,"hot":4,"w":15.0},"frontend-design":{"active":13,"hot":11,"w":39.0},"github-auto":{"active":3,"hot":2,"w":9.0},"llm-api":{"active":10,"hot":8,"w":30.0},"media-transcribe":{"active":2,"hot":2,"w":6.0},"photo-mgmt":{"active":8,"hot":8,"w":25.0},"privacy-local":{"active":6,"hot":5,"w":18.0},"pwa-offline":{"active":10,"hot":10,"w":31.0},"python-auto":{"active":7,"hot":6,"w":21.0},"responsive":{"active":3,"hot":3,"w":11.0},"secret-safety":{"active":6,"hot":5,"w":18.0},"spec-driven":{"active":5,"hot":5,"w":15.0},"supabase-db":{"active":8,"hot":7,"w":25.0},"task-integration":{"active":3,"hot":3,"w":10.0},"voice-input":{"active":3,"hot":3,"w":9.0}},"tech":{"cloudflare":{"active":2,"w":7.0},"csharp":{"active":2,"w":6.0},"docker":{"active":3,"w":9.0},"expo":{"active":2,"w":6.0},"html-single":{"active":1,"w":3.0},"llm":{"active":9,"w":26.0},"playwright":{"active":1,"w":3.0},"pwa":{"active":6,"w":19.0},"python":{"active":5,"w":16.0},"react":{"active":7,"w":21.0},"supabase":{"active":3,"w":10.0},"swift":{"active":2,"w":5.0},"tailwind":{"active":4,"w":12.0},"typescript":{"active":11,"w":33.0},"vercel":{"active":2,"w":8.0}},"totals":{"active30":20,"hot14":18,"repos":24},"v":1}
 -->

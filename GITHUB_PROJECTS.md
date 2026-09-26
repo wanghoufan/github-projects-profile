@@ -2,17 +2,17 @@
 
 > 自动采集自 GitHub API。本文件是 Public 展示层：只列公开仓库；私有仓库明细在内部注册表，不在此输出。
 
-> 生成时间：2026-09-26 ｜ 目标用户：wanghoufan ｜ 仓库总数：**46**（公开 24 / 私有 22）
+> 生成时间：2026-09-27 ｜ 目标用户：wanghoufan ｜ 公开仓库：**24**
 
-> 另有 **22** 个私有仓库未列出（名称、描述、进度均属内部治理层）。
+> 另有私有仓库未在本文件列出（名称、描述与进度均属内部治理层，不公开）。
 
 
 ## 总览（按最近更新排序）
 
 | 项目 | 类型 | 语言 | 最近更新 | 一句话定位 |
 |---|---|---|---|---|
-| `orca-v2.1-governance` | 公开 | JavaScript | 2026-09-26 | ORCA V2.1 治理模板分发版（主备模型 override + 双通道） |
 | `p028-party-night` | 公开 | TypeScript | 2026-09-26 | 无需账号、可离线继续的移动端聚会游戏 PWA：酒吧/家庭聚会快速开局，AI… |
+| `orca-v2.1-governance` | 公开 | JavaScript | 2026-09-26 | ORCA V2.1 治理模板分发版（主备模型 override + 双通道） |
 | `github-projects-profile` | 公开 | Python | 2026-09-26 | 本仓：GitHub 项目全景档案 + Skill 推荐背景，两份 Mark… |
 | `p030-skill-daily` | 公开 | Python | 2026-09-26 | Skill 日报体系：External Skill Intelligenc… |
 | `p026-yejian-buguangdeng` | 公开 | TypeScript | 2026-09-26 | Expo + React Native 单页应用：打开即全屏补光，8预设/… |
@@ -38,10 +38,10 @@
 
 ## ⚠️ 长期未更新（≥30 天未提交）
 
-- `50-haikou-cafes` · 公开 · 最近更新 2026-08-08（49 天前）
-- `nomad-seasons` · 公开 · 最近更新 2026-08-18（39 天前）
-- `cny-us-rate-board` · 公开 · 最近更新 2026-08-18（39 天前）
-- `ai-resume-job-matcher` · 公开 · 最近更新 2026-08-21（36 天前）
+- `50-haikou-cafes` · 公开 · 最近更新 2026-08-08（50 天前）
+- `nomad-seasons` · 公开 · 最近更新 2026-08-18（40 天前）
+- `cny-us-rate-board` · 公开 · 最近更新 2026-08-18（40 天前）
+- `ai-resume-job-matcher` · 公开 · 最近更新 2026-08-21（37 天前）
 
 ---
 
@@ -60,7 +60,7 @@
 - **链接**：https://github.com/wanghoufan/orca-v2.1-governance ｜ 预览：— ｜ 语言：JavaScript ｜ 更新：2026-09-26 ｜ Stars：0
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：JavaScript（详见 README）
-- **最新进度**：2026-09-26；最近提交：经验+1(共19)：同一模型ID已真调通过后换角色复用证据、不重复真调；两包同步
+- **最新进度**：2026-09-26；最近提交：AGENTS 红线补'转交/剪贴板(macOS)'规矩：pbcopy→pbpaste 回读校验，长文本落 MD 给链接；两包同步
 
 ### 额度 / 汇率桌面组件
 
@@ -87,7 +87,7 @@
 - **链接**：https://github.com/wanghoufan/cny-us-rate-board ｜ 预览：— ｜ 语言：C# ｜ 更新：2026-08-18 ｜ Stars：0
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：C#（详见 README）
-- **最新进度**：2026-08-18；最近提交：Merge commit '581a020a121319a43dff1aa7c06798d73ee428cb' into fix-launcher  ⚠️ 已 39 天未更新（长期停滞）
+- **最新进度**：2026-08-18；最近提交：Merge commit '581a020a121319a43dff1aa7c06798d73ee428cb' into fix-launcher  ⚠️ 已 40 天未更新（长期停滞）
 
 ### 加密 / 行情研判
 
@@ -126,7 +126,7 @@
 - **链接**：https://github.com/wanghoufan/ai-resume-job-matcher ｜ 预览：— ｜ 语言：TypeScript ｜ 更新：2026-08-21 ｜ Stars：0
 - **功能**：PDF 简历文字提取与格式校验；岗位匹配度、优势/差距分析和可执行的简历优化建议；定制求职信、10 个面试问题及参考回答、六维能力雷达图；Supabase 登录、私有简历存储与最近 30 条历史分析记录；纯 BYOK：用户临时输入自己的 API Key，支持 DeepSeek、通义千问、Kimi、豆包；邮箱魔法链接与 Google OAuth 登录入口
 - **技术栈**：Next.js 15、React 19、TypeScript；Supabase Auth、Postgres 与私有 Storage；pdfjs-dist 用于浏览器端 PDF 文本解析；DeepSeek / OpenAI Chat Completions 兼容接口；Waffo Pancake（测试环境）订阅收银台与 webhook；套餐数值与分析额度由 Supabase plans/subscriptions/usage_periods 表驱动
-- **最新进度**：2026-08-21；最近提交：Merge pull request #4 from wanghoufan/codex/fix-paid-plan-entitlements  ⚠️ 已 36 天未更新（长期停滞）
+- **最新进度**：2026-08-21；最近提交：Merge pull request #4 from wanghoufan/codex/fix-paid-plan-entitlements  ⚠️ 已 37 天未更新（长期停滞）
 
 ### 个人网站 / 作品集
 
@@ -137,7 +137,7 @@
 - **链接**：https://github.com/wanghoufan/nomad-seasons ｜ 预览：https://nomad-seasons.vercel.app ｜ 语言：JavaScript ｜ 更新：2026-08-18 ｜ Stars：0
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：JavaScript（详见 README）
-- **最新进度**：2026-08-18；已完成的设计验收记录：[design-qa.md](docs/qa/design-qa.md)  ⚠️ 已 39 天未更新（长期停滞）
+- **最新进度**：2026-08-18；已完成的设计验收记录：[design-qa.md](docs/qa/design-qa.md)  ⚠️ 已 40 天未更新（长期停滞）
 
 ### 健康 / 运动工具
 
@@ -165,7 +165,7 @@
 - **链接**：https://github.com/wanghoufan/50-haikou-cafes ｜ 预览：https://10-haikou-cafes.vercel.app ｜ 语言：HTML ｜ 更新：2026-08-08 ｜ Stars：0
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：构建工具：Python 3 静态站点生成器（build.py）；样式：Tailwind CSS 3.4 编译输出 site.css；数据源：businesses.json（50 家咖啡店结构化数据）+ data/archetypes.py（视觉原型配置）；模板：templates/pages.py（首页 HTML 模板 + JS 状态管理辅助函数）；前端交互：纯原生 JavaScript（无框架依赖），localStorage 持久化状态；地图：Leaflet 1.9 + OpenStreetMap 底图
-- **最新进度**：2026-08-08；最近提交：优化 README：移除移动端截图 + 精简预览区  ⚠️ 已 49 天未更新（长期停滞）
+- **最新进度**：2026-08-08；最近提交：优化 README：移除移动端截图 + 精简预览区  ⚠️ 已 50 天未更新（长期停滞）
 
 ### 其他 / 未分类
 
@@ -176,7 +176,7 @@
 - **链接**：https://github.com/wanghoufan/p028-party-night ｜ 预览：https://party-night-v1-2.vercel.app ｜ 语言：TypeScript ｜ 更新：2026-09-26 ｜ Stars：0
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：Next.js 16.3.3、React 19、TypeScript 5、Tailwind CSS 4 与 CSS Design Tokens；Zod 负责 AI 输出、Session 与本地数据校验；idb 封装 IndexedDB；Web Crypto 负责本机密钥加密；Vitest + Testing Library + Playwright
-- **最新进度**：2026-09-26；最近提交：docs: RG-01 App端Key杀进程重启PASS
+- **最新进度**：2026-09-26；最近提交：docs: NEW RC 重冻回填（49d6c75）+ 收口清单清零 + RG-01 通知就绪
 
 #### `github-projects-profile`  ·  公开
 

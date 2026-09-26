@@ -1,61 +1,44 @@
-# GitHub 项目全景档案（给智能体的背景材料）
+# GitHub 项目全景档案（Public 展示层）
 
-两份 Markdown，都由 `scripts/generate_portfolio.py` 从**同一次** GitHub 采集结果自动生成，供 AI 智能体按需读取。
+本仓库是 **Public 展示层**：只放公开项目的清单、背景与 Skill 画像。
 
 | 文件 | 定位 | 什么时候读 |
 |---|---|---|
-| [`PROJECT_MAP.md`](./PROJECT_MAP.md) | **项目身份与编号 SSOT**：本地目录 ↔ Project ID ↔ GitHub 仓库 | 需要知道某个编号对应哪个仓库、或某仓库对应哪个本地目录 |
-| [`GITHUB_PROJECTS.md`](./GITHUB_PROJECTS.md) | 完整 GitHub 项目档案 | 需要深入理解单个项目、具体技术实现、最新进度 |
-| [`SKILL_CONTEXT.md`](./SKILL_CONTEXT.md) | Skill Intelligence 的轻量需求画像 | Skill 日报、Skill 推荐、排行个性化、搜索关键词生成、判断某项 Skill 对当前项目群的适配度 |
+| [`GITHUB_PROJECTS.md`](./GITHUB_PROJECTS.md) | 公开项目档案（只含 Public 仓库） | 需要了解某个公开项目做什么、用什么技术 |
+| [`SKILL_CONTEXT.md`](./SKILL_CONTEXT.md) | Skill 需求画像的公开版 | Skill 日报、推荐、排行个性化、关键词生成 |
 
-## 项目编号与映射（SSOT）
+**完整的项目编号、Private 映射与治理数据位于内部治理层，不在本仓公开。**
+本仓库不再保存 `PROJECT_MAP.tsv` / `PROJECT_MAP.md`，历史提交里的旧版本属于待处理遗留（见下）。
 
-本仓是**目录**，不是第二份源码仓库：这里只记录编号、名称、映射与状态，不记录代码副本、密钥或 `.env` 内容。
+## 命名契约（公开约定，不含任何项目数据）
 
-命名契约：
-
-- **Project ID** `PNNN` 与本地目录三位编号永久一致，`ing`→`done` 不改变编号。
-- **本地目录** `NNN-状态-中文名`，面向人的可读性。
-- **GitHub 仓库** `pNNN-english-slug`，面向互联网；不含 `ing`/`done`，不含版本号。
+- **Project ID** `PNNN` 与本地目录三位编号永久一致，`ing`→`done` 不改变编号；出现过的编号永不复用。
+- **本地目录** `NNN-状态-中文名`；**GitHub 仓库** `pNNN-english-slug`，不含状态、不含版本号。
 - 一个项目一个主仓库；Public / Private 只是可见性属性，**不为展示而复制第二份同内容仓库**。
 - 真正独立发布的多平台仓库共用同一 Project ID + 角色后缀（`-mac` / `-windows`）。
-- `000-*` 是基础设施目录，暂不纳入 P 编号，单独列在映射表下半区。
+- `000-*` 是基础设施目录，不纳入 P 编号序列。
 
-数据源是机器可读的 [`PROJECT_MAP.tsv`](./PROJECT_MAP.tsv)，Markdown 视图由脚本渲染，二者不要手工分别改：
+新项目的出生一律交给 Project Steward（说「你是项目管家」即可），不要手工取号或手工建仓。
+
+## 公开档案的生成与自检
 
 ```bash
-python3 scripts/project_github_audit.py --fetch   # 只读对账：Git/origin/远端存在/dirty/ahead/behind/重复映射/孤儿
-python3 scripts/render_project_map.py --audit /tmp/audit.json   # 由 TSV + 审计结果重渲 PROJECT_MAP.md
+python3 scripts/generate_portfolio.py          # 重新采集 GitHub 并生成公开档案（默认只输出公开仓库）
+python3 scripts/project_github_audit.py --fetch  # 只读对账（结果写回内部层，不在本仓）
 ```
 
 对账工具只检查、不改写（不 commit / push / rename / 改可见性）。退出码：`0` 全部干净，`1` 有需人工处理的问题，`2` 扫描或环境失败。
 
 ## 新项目怎么出生（Project Steward）
 
-上面的命名契约由 Project Bootstrapper 落地。**以后新项目不要手工建**。
+上面的命名契约由 Project Steward 落地。**以后新项目不要手工建**：对本机的智能体说一句
+「你是项目管家」，它就会定位角色真源并用确定性 CLI 完成取号、建目录、建仓、登记与校验。
 
-本仓库是 **Public 展示层**，只放脱敏后的公开档案。执行器源码、完整注册表 `PROJECT_MAP.tsv`、编号台账 `PROJECT_RESERVATIONS.tsv`、事务状态都在 **内部治理层**：`../000-alw-steward 内部治理/`（不公开，也不进本仓历史）。
+本仓库只呈现脱敏后的公开档案。完整的项目编号、Private 映射、事务状态与执行器源码
+都在**内部治理层（不公开）**，其目录与文件结构不在这里列出。
 
-```bash
-python3 "../000-alw-steward 内部治理/steward/steward.py" --help   # 全部子命令
-```
-
-| 能力 | 命令 | 说明 |
-|---|---|---|
-| 临时试验 | `create-scratch` | 只落 `2.Scratch/` + 本地 Git，不占 P 编号、不建 GitHub、不写表 |
-| 正式项目 | `create-project` | 取号 → 建目录 → Git → Private 仓库 → push → `.project.yaml` → 表 + 档案 |
-| 晋升 | `promote-project` | Scratch → 正式，代码与 Git 历史整体搬迁，不重建 |
-| 审计 | `audit-project` / `check-backup` / `sync-registry` / `next-id` | 只读三方核对（目录 ↔ `.project.yaml` ↔ 表 ↔ GitHub） |
-| 生命周期 | `change-status` | `ing/paused/done/archived`，P 编号与仓库名不变；只提交自己改的那个元数据文件 |
-| 编号治理 | `reserve` / `list-transactions` | 出现过 / 测试占用过的号永久保留（tombstone），编号只增不减 |
-| 修复 | `repair-remote` | 把 origin 指回登记表里的仓库 |
-| 安全 | `scan-secrets`（工作树 / 暂存 / Git 历史三层）/ `--dry-run` / `--resume <transaction_id>` | 首次 push 前拦密钥；事务半完成可续跑，不重复占号 |
-
-隔离实例（`STEWARD_CODING` 指向别处）自动走 **mock GitHub 后端**，只建本地 bare 仓，物理上碰不到真实账号；只有生产工作区的命令才会访问 GitHub。
-
-角色规则、意图分类和「什么时候必须停下来问用户」写在内部治理层的 `steward/PROJECT_STEWARD.md`。
-用户侧只需要说「临时试一下 X」「正式创建 X」「把刚才那个转正式项目」。本仓库的公开清单只列 Public 仓库；私有项目的中文名、本地目录与治理说明不出现在这里。
-
+公开层的红线由工具自检：`check-public` 会检查本仓文件里是否出现私有仓库名、
+私有项目中文名、本地目录映射、绝对路径或密钥形态字符串。
 
 **读取顺序**：日报类智能体默认只读 `SKILL_CONTEXT.md`；只有当需要判断某个 Skill 是否适配某个**具体项目**时，才再进 `GITHUB_PROJECTS.md`。不要让日报每天读完整档案（约 40KB），那是浪费。
 

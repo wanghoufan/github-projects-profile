@@ -418,10 +418,11 @@ def main():
     md.append("# 我的 GitHub 项目全景（给智能体的背景档案）\n")
     md.append("> 自动采集自 GitHub API。本文件是 Public 展示层：只列公开仓库；"
               "私有仓库明细在内部注册表，不在此输出。\n")
-    md.append("> 生成时间：%s ｜ 目标用户：%s ｜ 仓库总数：**%d**（公开 %d / 私有 %d）\n" % (
-        today.isoformat(), USER, pub + pri, pub, pri))
+    # §8：公开层不输出精确私有数量，避免每新增一个内部仓就产生无意义 diff
+    md.append("> 生成时间：%s ｜ 目标用户：%s ｜ 公开仓库：**%d**\n" % (
+        today.isoformat(), USER, pub))
     if hidden:
-        md.append("> 另有 **%d** 个私有仓库未列出（名称、描述、进度均属内部治理层）。\n" % len(hidden))
+        md.append("> 另有私有仓库未在本文件列出（名称、描述与进度均属内部治理层，不公开）。\n")
     md.append("\n## 总览（按最近更新排序）\n")
     md.append("| 项目 | 类型 | 语言 | 最近更新 | 一句话定位 |")
     md.append("|---|---|---|---|---|")
