@@ -4,8 +4,31 @@
 
 | 文件 | 定位 | 什么时候读 |
 |---|---|---|
+| [`PROJECT_MAP.md`](./PROJECT_MAP.md) | **项目身份与编号 SSOT**：本地目录 ↔ Project ID ↔ GitHub 仓库 | 需要知道某个编号对应哪个仓库、或某仓库对应哪个本地目录 |
 | [`GITHUB_PROJECTS.md`](./GITHUB_PROJECTS.md) | 完整 GitHub 项目档案 | 需要深入理解单个项目、具体技术实现、最新进度 |
 | [`SKILL_CONTEXT.md`](./SKILL_CONTEXT.md) | Skill Intelligence 的轻量需求画像 | Skill 日报、Skill 推荐、排行个性化、搜索关键词生成、判断某项 Skill 对当前项目群的适配度 |
+
+## 项目编号与映射（SSOT）
+
+本仓是**目录**，不是第二份源码仓库：这里只记录编号、名称、映射与状态，不记录代码副本、密钥或 `.env` 内容。
+
+命名契约：
+
+- **Project ID** `PNNN` 与本地目录三位编号永久一致，`ing`→`done` 不改变编号。
+- **本地目录** `NNN-状态-中文名`，面向人的可读性。
+- **GitHub 仓库** `pNNN-english-slug`，面向互联网；不含 `ing`/`done`，不含版本号。
+- 一个项目一个主仓库；Public / Private 只是可见性属性，**不为展示而复制第二份同内容仓库**。
+- 真正独立发布的多平台仓库共用同一 Project ID + 角色后缀（`-mac` / `-windows`）。
+- `000-*` 是基础设施目录，暂不纳入 P 编号，单独列在映射表下半区。
+
+数据源是机器可读的 [`PROJECT_MAP.tsv`](./PROJECT_MAP.tsv)，Markdown 视图由脚本渲染，二者不要手工分别改：
+
+```bash
+python3 scripts/project_github_audit.py --fetch   # 只读对账：Git/origin/远端存在/dirty/ahead/behind/重复映射/孤儿
+python3 scripts/render_project_map.py --audit /tmp/audit.json   # 由 TSV + 审计结果重渲 PROJECT_MAP.md
+```
+
+对账工具只检查、不改写（不 commit / push / rename / 改可见性）。退出码：`0` 全部干净，`1` 有需人工处理的问题，`2` 扫描或环境失败。
 
 **读取顺序**：日报类智能体默认只读 `SKILL_CONTEXT.md`；只有当需要判断某个 Skill 是否适配某个**具体项目**时，才再进 `GITHUB_PROJECTS.md`。不要让日报每天读完整档案（约 40KB），那是浪费。
 

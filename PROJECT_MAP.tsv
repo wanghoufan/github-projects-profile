@@ -1,0 +1,55 @@
+pid	kind	local_path	display_name	repo	visibility	note
+P001	project	001-ing-家庭保单数据看板	家庭保单数据看板	p001-family-insurance-dashboard	PUBLIC	renamed
+P002	project	002-ing-第三周作业-24-生活物种测试	24 生活物种测试	p002-life-species-test	PUBLIC	renamed
+P003	project	003-ing-个人网站项目-site	个人网站 site	p003-houfan-xuezhang-site	PUBLIC	renamed
+P004	project	004-done-gpt-cc-ds监控工具	DeepSeek/CC/DS 监控	DeepSeekBalanceWidget	PUBLIC	NOT_RENAMED 与 P010 同一产品线，需人工定 Project ID
+P005	project	005-ing-家族图谱管理器	家族图谱管理器	p005-qinyuan-tupu	PRIVATE	renamed
+P006	project	006-ing-提示词管理器	提示词管理器	p006-prompt-manager	PRIVATE	renamed
+P007	project	007-ing-家族图谱管理器-模板-ORCA-副本	家族图谱 ORCA 模板副本			NO_ORIGIN 仓库零 commit
+P008	project	008-ing-语音输入法	懒得打字 macOS	p008-no-more-typing	PRIVATE	renamed
+P009	project	009-ing-滴答清单CLI	滴答清单时间体系	p009-dida365-time-system	PRIVATE	renamed
+P010	project	010-ing-DS-GPT桌面额度显示工具	DS/GPT 桌面额度 Mac	DeepSeekBalanceWidget-Mac	PUBLIC	NOT_RENAMED 与 P004 同一产品线，需人工定 Project ID
+P011	project	011-ing-个人打卡小工具	个人打卡小工具	p011-place-journal	PUBLIC	renamed
+P012	project	012-ing-个人投资组合平衡面板	个人投资组合平衡面板			NOT_GIT LOCAL_ONLY 无仓库
+P013	project	013-ing-滚仓计算器V2.0/excel-html-1-2-25-20	滚仓计算器 V2.0	p013-roll-position-calculator	PUBLIC	renamed git 在二级目录
+P014	project	014-ing-山寨滚仓网站/pepe-doge-breakout-radar-deepseek-v4-pro	山寨滚仓雷达 deepseek	pepe-doge-breakout-radar-deepseek-v4-pro	PUBLIC	NOT_RENAMED 同产品线存在 KIMI 变体仓
+P015	project	015-ing-photo-library	摄影图库 PWA	p015-photo-library	PUBLIC	renamed
+P016	project	016-ing-懒得打字-安卓版本	懒得打字 安卓版	p016-landedazi-android	PRIVATE	renamed
+P017	project	017-ing-RSS聚合-个人信息雷达	RSS 聚合信息雷达	p017-personal-rss	PRIVATE	renamed
+P018	project	018-ing-本地视频转文字工具	视频转 Obsidian Mac	p018-video2obsidian-mac	PUBLIC	renamed Windows 孪生仓本机无 checkout
+P019	project	019-ing-摄影图库app	摄影约拍机位库	p019-photo-spot-app	PRIVATE	renamed
+P020	project	020-ing-拉伸换边app	拉伸换边计时 App	p020-stretch-side-timer	PUBLIC	renamed 另有未绑定旧仓 stretch-side-timer
+P021	project	021-ing-workbuddy-switch	workbuddy switch			WRONG_OWNER origin=changexbc/workbuddy-switch 未改动
+P022	project	022-ing-葫芦军师红利指数看板	红利指数看板	p022-hongli-dixin-calc	PRIVATE	renamed
+P023	project	023-ing-A股十一大指数-十年估值分位汇总/a-share-index-valuation-report	A股指数估值分位	p023-a-share-index-valuation	PUBLIC	renamed git 在二级目录
+P024	project	024-ing-葫芦军师已下载清单整理	葫芦军师清单整理			NOT_GIT LOCAL_ONLY 无仓库
+P025	project	025-ing-拉伸语音播报 app	拉伸语音播报 App	p025-stretch-routine-app	PUBLIC	renamed
+P026	project	026-ing-夜间补光灯	夜间补光灯	p026-yejian-buguangdeng	PUBLIC	renamed
+P027	project	027-ing-蛋白质计算器/protein-calculator	蛋白质计算器	p027-protein-calculator	PRIVATE	renamed git 在二级目录
+P028	project	028-ing-酒吧聚会社交导演	酒吧聚会社交导演	p028-party-night	PUBLIC	renamed
+P029	project	029-ing-图片本地整理项目	图片本地整理	p029-photo-library-local	PRIVATE	renamed
+P030	project	030-ing-skill 日报体系	Skill 日报体系	p030-skill-daily	PUBLIC	renamed
+-	nested	002-ing-第三周作业-24-生活物种测试/ing 丨 0825 workbuddy探索/WorkBuddy教程	WorkBuddy 双轴教程	workbuddy-dual-axis-tutorial	PRIVATE	嵌套仓 无独立编号 需人工定归属
+-	infra	000-alw-github 档案	GitHub 档案 SSOT	github-projects-profile	PUBLIC	000-* 不纳入 P 编号
+-	infra	000-alw-数据库管理专家	数据库治理中心	alw-db-governance	PRIVATE	000-* 不纳入 P 编号
+-	infra	000-alw-个人偏好-电脑治理仓库-skill管理	个人偏好与 Skill 治理			NOT_GIT 000-* 待人工决定是否建 S 编号
+-	infra	000-alw-自动化任务	自动化任务			NOT_GIT 000-* 待人工决定是否建 S 编号
+-	external	../docker/prompt-manager	docker 副本 prompt-manager	p006-prompt-manager	PRIVATE	DUPLICATE_MAPPING 同 repo 的第二份本地 checkout
+-	external	../docker/family-insurance-dashboard	docker 副本保单看板	p001-family-insurance-dashboard	PUBLIC	DUPLICATE_MAPPING 同 repo 的第二份本地 checkout
+-	external	../docker/personal-checkin	docker 副本个人打卡	p011-place-journal	PUBLIC	DUPLICATE_MAPPING 同 repo 的第二份本地 checkout
+-	external	../Infrastructure/orca-deepseek-bridge	ORCA DeepSeek 桥	orca-deepseek-bridge	PRIVATE	1.Active 之外 有本地 checkout 非孤儿
+-	external	../4.Templates（PC）/2026-09-09 丨 MAC 丨 ORCA V2.1 治理模板 丨 分发版-2026-09-11	ORCA V2.1 治理模板	orca-v2.1-governance	PUBLIC	1.Active 之外 有本地 checkout 非孤儿
+-	orphan	-	未绑定本地项目	24-species-test	PRIVATE	空仓库 建议人工确认后归档
+-	orphan	-	未绑定本地项目	50-haikou-cafes	PUBLIC	GITHUB_ORPHAN
+-	orphan	-	未绑定本地项目	DeepSeekBalanceWidget-Windows	PUBLIC	P004/P010 产品线孪生仓 本机无 checkout
+-	orphan	-	未绑定本地项目	Video2Obsidian-Windows	PRIVATE	P018 产品线孪生仓 本机无 checkout
+-	orphan	-	未绑定本地项目	ai-resume-job-matcher	PUBLIC	GITHUB_ORPHAN
+-	orphan	-	未绑定本地项目	ai-storyboard-generator	PRIVATE	GITHUB_ORPHAN
+-	orphan	-	未绑定本地项目	cny-rate-board	PRIVATE	GITHUB_ORPHAN
+-	orphan	-	未绑定本地项目	cny-us-rate-board	PUBLIC	GITHUB_ORPHAN
+-	orphan	-	未绑定本地项目	nomad-seasons	PUBLIC	GITHUB_ORPHAN
+-	orphan	-	未绑定本地项目	orca-governance-validation-progress	PRIVATE	归档仓
+-	orphan	-	未绑定本地项目	pepe-doge-breakout-radar-KIMI-K2.7-CODE	PUBLIC	P014 产品线变体仓 本机无 checkout
+-	orphan	-	未绑定本地项目	personal-website	PRIVATE	疑似 P003 旧版本
+-	orphan	-	未绑定本地项目	skills-manager-backup	PRIVATE	000 基础设施备份仓
+-	orphan	-	未绑定本地项目	stretch-side-timer	PUBLIC	疑似 P020 前代仓 需人工确认后归档
