@@ -125,7 +125,8 @@ def main():
     a = ap.parse_args()
 
     here = os.path.dirname(os.path.abspath(__file__))
-    mapfile = os.path.abspath(a.mapfile or os.path.join(here, "..", "PROJECT_MAP.tsv"))
+    mapfile = os.path.abspath(a.mapfile or os.path.join(here, "..", "..",
+                             "000-alw-steward 内部治理", "PROJECT_MAP.tsv"))
     if not os.path.isfile(maptopath := mapfile):
         print(f"ERROR: map not found: {mapfile}", file=sys.stderr)
         return 2

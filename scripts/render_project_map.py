@@ -26,9 +26,9 @@ def read_map(path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--map", default=os.path.join(HERE, "..", "PROJECT_MAP.tsv"))
+    ap.add_argument("--map", default=os.path.join(HERE, "..", "..", "000-alw-steward 内部治理", "PROJECT_MAP.tsv"))
     ap.add_argument("--audit", default="/tmp/audit.json")
-    ap.add_argument("--out", default=os.path.join(HERE, "..", "PROJECT_MAP.md"))
+    ap.add_argument("--out", default=os.path.join(HERE, "..", "..", "000-alw-steward 内部治理", "PROJECT_MAP.md"))
     ap.add_argument("--today", default=date.today().isoformat())
     a = ap.parse_args()
 

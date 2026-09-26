@@ -1,7 +1,17 @@
-# 本地笔记与系统文件，不进公开仓库
-.workbuddy/
-.DS_Store
+# 内部治理层（§6）：完整注册表、编号台账、事务状态、工具源码一律不进 Public 档案仓
+PROJECT_MAP.tsv
+PROJECT_MAP.md
+PROJECT_RESERVATIONS.tsv
+INTERNAL_REGISTRY.md
+steward/
+steward/state/
 
 # Python 运行产物
 __pycache__/
 *.py[cod]
+
+# 本地临时
+*.tmp
+.DS_Store
+**/.DS_Store
+.workbuddy/

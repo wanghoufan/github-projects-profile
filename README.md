@@ -30,6 +30,33 @@ python3 scripts/render_project_map.py --audit /tmp/audit.json   # 由 TSV + 审�
 
 对账工具只检查、不改写（不 commit / push / rename / 改可见性）。退出码：`0` 全部干净，`1` 有需人工处理的问题，`2` 扫描或环境失败。
 
+## 新项目怎么出生（Project Steward）
+
+上面的命名契约由 Project Bootstrapper 落地。**以后新项目不要手工建**。
+
+本仓库是 **Public 展示层**，只放脱敏后的公开档案。执行器源码、完整注册表 `PROJECT_MAP.tsv`、编号台账 `PROJECT_RESERVATIONS.tsv`、事务状态都在 **内部治理层**：`../000-alw-steward 内部治理/`（不公开，也不进本仓历史）。
+
+```bash
+python3 "../000-alw-steward 内部治理/steward/steward.py" --help   # 全部子命令
+```
+
+| 能力 | 命令 | 说明 |
+|---|---|---|
+| 临时试验 | `create-scratch` | 只落 `2.Scratch/` + 本地 Git，不占 P 编号、不建 GitHub、不写表 |
+| 正式项目 | `create-project` | 取号 → 建目录 → Git → Private 仓库 → push → `.project.yaml` → 表 + 档案 |
+| 晋升 | `promote-project` | Scratch → 正式，代码与 Git 历史整体搬迁，不重建 |
+| 审计 | `audit-project` / `check-backup` / `sync-registry` / `next-id` | 只读三方核对（目录 ↔ `.project.yaml` ↔ 表 ↔ GitHub） |
+| 生命周期 | `change-status` | `ing/paused/done/archived`，P 编号与仓库名不变；只提交自己改的那个元数据文件 |
+| 编号治理 | `reserve` / `list-transactions` | 出现过 / 测试占用过的号永久保留（tombstone），编号只增不减 |
+| 修复 | `repair-remote` | 把 origin 指回登记表里的仓库 |
+| 安全 | `scan-secrets`（工作树 / 暂存 / Git 历史三层）/ `--dry-run` / `--resume <transaction_id>` | 首次 push 前拦密钥；事务半完成可续跑，不重复占号 |
+
+隔离实例（`STEWARD_CODING` 指向别处）自动走 **mock GitHub 后端**，只建本地 bare 仓，物理上碰不到真实账号；只有生产工作区的命令才会访问 GitHub。
+
+角色规则、意图分类和「什么时候必须停下来问用户」写在内部治理层的 `steward/PROJECT_STEWARD.md`。
+用户侧只需要说「临时试一下 X」「正式创建 X」「把刚才那个转正式项目」。本仓库的公开清单只列 Public 仓库；私有项目的中文名、本地目录与治理说明不出现在这里。
+
+
 **读取顺序**：日报类智能体默认只读 `SKILL_CONTEXT.md`；只有当需要判断某个 Skill 是否适配某个**具体项目**时，才再进 `GITHUB_PROJECTS.md`。不要让日报每天读完整档案（约 40KB），那是浪费。
 
 直链（把 `<owner>/<repo>` 换成实际地址即可）：

@@ -448,3 +448,33 @@
 - **功能**：（README 未列明要点，详见上方链接）
 - **技术栈**：Python（详见 README）
 - **最新进度**：2026-09-22；最近提交：初始化：GitHub 项目全景档案（41 仓：公开 21 / 私有 20）
+
+<!-- BEGIN STEWARD PROJECT REGISTRY (generated; do not edit by hand) -->
+
+## 公开项目清单（机器同步）
+
+> 由 `steward sync-registry` 从内部注册表生成，只包含 Public 仓库；勿手工编辑本节。
+> 私有项目的名称、本地目录与治理说明属于内部信息，保存在内部注册表，不进入本仓库。
+
+| Project ID | GitHub Repo | 状态 |
+|---|---|---|
+| P001 | `p001-family-insurance-dashboard` | ing |
+| P002 | `p002-life-species-test` | ing |
+| P003 | `p003-houfan-xuezhang-site` | ing |
+| P004 | `DeepSeekBalanceWidget` | done |
+| P010 | `DeepSeekBalanceWidget-Mac` | ing |
+| P011 | `p011-place-journal` | ing |
+| P013 | `p013-roll-position-calculator` | ? |
+| P014 | `pepe-doge-breakout-radar-deepseek-v4-pro` | ? |
+| P015 | `p015-photo-library` | ing |
+| P018 | `p018-video2obsidian-mac` | ing |
+| P020 | `p020-stretch-side-timer` | ing |
+| P023 | `p023-a-share-index-valuation` | ? |
+| P025 | `p025-stretch-routine-app` | ing |
+| P026 | `p026-yejian-buguangdeng` | ing |
+| P028 | `p028-party-night` | ing |
+| P030 | `p030-skill-daily` | ing |
+
+另有 15 个私有项目已编号并纳入内部注册表，不在本公开清单中列出。
+
+<!-- END STEWARD PROJECT REGISTRY -->
